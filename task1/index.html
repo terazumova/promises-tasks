@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Логин и пароль</title>
+    <style>
+      .form-control {
+        display: flex;
+
+        margin-bottom: 15px;
+      }
+
+      .form__label {
+        min-width: 150px;
+      }
+
+      .form__input {
+        max-width: 500px;
+        flex: 1;
+      }
+
+      .error {
+        border: 1px solid #f00;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .red-text {
+        color: #f00;
+      }
+
+      .loader {
+        margin-top: 10px;
+        margin-left: 10px;
+        border: 4px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 4px solid #3498db;
+        width: 15px;
+        height: 15px;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
+      }
+
+      /* Safari */
+      @-webkit-keyframes spin {
+        0% {
+          -webkit-transform: rotate(0deg);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <form action="" class="form">
+      <div class="form-control">
+        <label for="login" class="form__label">Логин</label>
+        <input id="login" type="text" class="form__input form__input-login" name="login" />
+      </div>
+      <div class="form-control">
+        <label for="password" class="form__label">Пароль</label>
+        <input id="password" type="password" class="form__input form__input-password" name="password" />
+      </div>
+      <button class="button" type="submit">Отправить</button>
+      <p class="backend-answer hidden red-text"></p>
+      <div class="loader hidden"></div>
+    </form>
+  </body>
+</html>
+<script>
+  const form = document.querySelector('.form');
+  const password = document.querySelector('.form__input-password');
+  const backendAnswer = document.querySelector('.backend-answer');
+  const button = document.querySelector('.button');
+  const loader = document.querySelector('.loader');
+
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+
+    const formElements = form.querySelectorAll('input');
+
+    let isValid = true;
+    for (let element of formElements) {
+      hideErrors(element);
+
+      if (!requiredValidation(element.value)) {
+        isValid = false;
+
+        showErrors(element);
+        event.preventDefault();
+      }
+    }
+
+    if (!isValid) {
+      return;
+    }
+
+    loader.classList.remove('hidden');
+    button.disabled = true;
+
+    fetch('api.json')
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        if (result.status === 'ok') {
+          hideErrors(password);
+          backendAnswer.textContent = 'Пользователь прошел авторизацию.';
+        }
+
+        if (result.status === 'error') {
+          showErrors(password);
+          backendAnswer.textContent = 'Пароль неверный.';
+        }
+      })
+      .catch(err => {
+        backendAnswer.textContent = 'Ошибка на сервере.';
+      })
+      .finally(() => {
+        loader.classList.add('hidden');
+        backendAnswer.classList.remove('hidden');
+
+        button.disabled = false;
+      });
+  });
+
+  function hideErrors(element) {
+    element.classList.remove('error');
+  }
+
+  function showErrors(element) {
+    element.classList.add('error');
+  }
+
+  function requiredValidation(value) {
+    return value.trim().length !== 0;
+  }
+</script>

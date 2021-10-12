@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <title>Лайк/дизлайк</title>
+    <style>
+      .icon {
+        font-size: 45px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .loader {
+        border: 8px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 8px solid #3498db;
+        width: 30px;
+        height: 30px;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
+      }
+
+      /* Safari */
+      @-webkit-keyframes spin {
+        0% {
+          -webkit-transform: rotate(0deg);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <i class="far fa-thumbs-up icon"></i>
+    <div class="loader hidden"></div>
+  </body>
+</html>
+<script>
+  const like = document.querySelector('.fa-thumbs-up');
+  const loader = document.querySelector('.loader');
+
+  function toggleLike(jsonPath, isLike) {
+    fetch(jsonPath)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        if (isLike) {
+          like.classList.add('fas');
+          like.classList.remove('far');
+        } else {
+          like.classList.add('far');
+          like.classList.remove('fas');
+        }
+
+        hideLoader();
+      });
+  }
+
+  like.addEventListener('click', event => {
+    showLoader();
+
+    if (like.classList.contains('far')) {
+      toggleLike('like.json', true);
+    }
+
+    if (like.classList.contains('fas')) {
+      toggleLike('dislike.json', false);
+    }
+  });
+
+  function showLoader() {
+    like.classList.add('hidden');
+    loader.classList.remove('hidden');
+  }
+
+  function hideLoader() {
+    like.classList.remove('hidden');
+    loader.classList.add('hidden');
+  }
+</script>

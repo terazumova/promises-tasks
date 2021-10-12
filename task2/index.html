@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Еду в магадан</title>
+    <style>
+      .form-control {
+        display: flex;
+
+        margin-bottom: 15px;
+      }
+
+      .form__label {
+        min-width: 100px;
+      }
+
+      .form__select {
+        max-width: 700px;
+        flex: 1;
+      }
+
+      .error {
+        border: 1px solid #f00;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .loader {
+        border: 4px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 4px solid #3498db;
+        width: 15px;
+        height: 15px;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
+      }
+
+      /* Safari */
+      @-webkit-keyframes spin {
+        0% {
+          -webkit-transform: rotate(0deg);
+        }
+        100% {
+          -webkit-transform: rotate(360deg);
+        }
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <form action="city.html" class="form">
+      <div class="form-control">
+        <label for="select" class="form__label">Куда поедете?</label>
+        <div class="loader"></div>
+
+        <select id="select" class="select form__select hidden" name="select">
+          <option value="">Выберите город</option>
+        </select>
+      </div>
+      <button class="button" type="submit">Отправить</button>
+    </form>
+  </body>
+</html>
+<script>
+  const button = document.querySelector('.button');
+  const loader = document.querySelector('.loader');
+  const select = document.querySelector('.select');
+  button.disabled = false;
+
+  (async () => {
+    const response = await fetch('./russian-cities.json');
+    const cities = await response.json();
+
+    loader.classList.add('hidden');
+    select.classList.remove('hidden');
+
+    cities.forEach(element => {
+      const newOption = document.createElement('option');
+      newOption.value = element.name;
+      newOption.textContent = element.name;
+
+      select.appendChild(newOption);
+    });
+
+    const form = document.querySelector('.form');
+
+    form.addEventListener('submit', event => {
+      hideErrors(select);
+
+      if (!checkValidation(select.name, select.value)) {
+        showErrors(select);
+        event.preventDefault();
+      }
+
+      button.disabled = true;
+    });
+
+    function checkValidation(name, value) {
+      switch (name) {
+        case 'select':
+          return requiredValidation(value);
+        default:
+          return true;
+      }
+    }
+
+    function requiredValidation(value) {
+      return value.trim().length !== 0;
+    }
+
+    function hideErrors(element) {
+      element.classList.remove('error');
+    }
+
+    function showErrors(element) {
+      element.classList.add('error');
+    }
+  })();
+</script>
