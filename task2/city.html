@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style.css" /> 
+    <title>Document</title>
+  </head>
+  <body>
+    <p class="trip-ability hidden"></p>
+    <div class="loader"></div>
+    <h1 class="city-destination">Еду в</h1>
+  </body>
+</html>
+<script>
+  const cityDestinationElement = document.querySelector('.city-destination');
+  const tripAbility = document.querySelector('.trip-ability');
+  const loader = document.querySelector('.loader');
+
+  const cityStr = decodeURIComponent(location.search);
+  const cityArray = cityStr.slice(1).split('=');
+  const cityName = cityArray[1];
+  if (cityName) {
+    cityDestinationElement.textContent += ' ' + cityArray[1];
+  }
+
+  fetch('api.json')
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (result) {
+      if (result.status === 'ok') {
+        tripAbility.textContent = 'Приехали!';
+      }
+
+      if (result.status === 'error') {
+        tripAbility.textContent = 'Поездка невозможна...';
+      }
+    })
+    .catch(err => {
+      tripAbility.textContent = 'Проблемы у сервиса поездок, повторите попытку позже!';
+    })
+    .finally(() => {
+      loader.classList.add('hidden');
+      tripAbility.classList.remove('hidden');
+    });
+</script>

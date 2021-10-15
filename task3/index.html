@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style.css" /> 
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <title>Лайк/дизлайк</title>
+  </head>
+  <body>
+    <i class="far fa-thumbs-up like-icon"></i>
+    <div class="loader hidden"></div>
+  </body>
+</html>
+<script>
+  const likeBtn = document.querySelector('.like-icon');
+  const loader = document.querySelector('.loader');
+
+  function toggleLike(jsonPath, isLike) {
+    fetch(jsonPath)
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        if (isLike) {
+          likeBtn.classList.add('fas');
+          likeBtn.classList.remove('far');
+        } else {
+          likeBtn.classList.add('far');
+          likeBtn.classList.remove('fas');
+        }
+
+        hideLoader();
+      });
+  }
+
+  likeBtn.addEventListener('click', event => {
+    showLoader();
+
+    if (likeBtn.classList.contains('far')) {
+      toggleLike('like.json', true);
+    }
+
+    if (likeBtn.classList.contains('fas')) {
+      toggleLike('dislike.json', false);
+    }
+  });
+
+  function showLoader() {
+    likeBtn.classList.add('hidden');
+    loader.classList.remove('hidden');
+  }
+
+  function hideLoader() {
+    likeBtn.classList.remove('hidden');
+    loader.classList.add('hidden');
+  }
+</script>
