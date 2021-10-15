@@ -4,41 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style.css" /> 
     <title>Document</title>
-    <style>
-      .hidden {
-        display: none;
-      }
-
-      .loader {
-        border: 4px solid #f3f3f3;
-        border-radius: 50%;
-        border-top: 4px solid #3498db;
-        width: 15px;
-        height: 15px;
-        -webkit-animation: spin 2s linear infinite; /* Safari */
-        animation: spin 2s linear infinite;
-      }
-
-      /* Safari */
-      @-webkit-keyframes spin {
-        0% {
-          -webkit-transform: rotate(0deg);
-        }
-        100% {
-          -webkit-transform: rotate(360deg);
-        }
-      }
-
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-    </style>
   </head>
   <body>
     <p class="trip-ability hidden"></p>
@@ -54,7 +21,7 @@
   const cityStr = decodeURIComponent(location.search);
   const cityArray = cityStr.slice(1).split('=');
   const cityName = cityArray[1];
-  if (cityName && cityName !== '') {
+  if (cityName) {
     cityDestinationElement.textContent += ' ' + cityArray[1];
   }
 
